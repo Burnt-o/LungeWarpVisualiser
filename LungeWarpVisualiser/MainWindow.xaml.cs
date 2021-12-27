@@ -24,16 +24,20 @@ namespace LungeWarpVisualiser
     {
         public MainWindow()
         {
-            Console.WriteLine("1");
+
             InitializeComponent();
-            Console.WriteLine("2");
+
+
             Vector3 inputpos = new Vector3(0, 800, 200);
             Vector3 inputrot = new Vector3(0, 0, 0);
 
 
             Vector3 firstoutput = Calc_out(inputpos, inputrot);
-            Console.WriteLine(firstoutput);
-            Console.WriteLine("reversed: " + Calc_out_reverse(firstoutput, 0));
+
+            Console.WriteLine("Input position" + inputpos);
+            Console.WriteLine("Input rotation" + inputrot);
+            Console.WriteLine("Output position: "+ firstoutput);
+            Console.WriteLine("Reversing output position to get input position " + Calc_out_reverse(firstoutput, inputrot.Z));
         }
 
         public double Radians(double degrees)
@@ -41,6 +45,7 @@ namespace LungeWarpVisualiser
             return degrees * Math.PI / 180;
         }
 
+        //take in input position and input rotation (in degrees) (where you're lunge warping from, and return output position (where you will get lunge warped to)
         public Vector3 Calc_out(Vector3 inputpos, Vector3 inputrot)
         {
             inputrot.X = (float)Radians(inputrot.X);
@@ -58,13 +63,18 @@ namespace LungeWarpVisualiser
             return Killme;
         }
 
+
+
+        //EXTREMELY wip - trying to basically do the lunge warp calculation in reverse. currently assuming 0 pitch and 0 roll
+        //this is basically a simultaneous equation 
+        //and is extremely unfinished ugh
         public Vector3 Calc_out_reverse(Vector3 input, float yaw)
         {
             yaw = (float)Radians(yaw);
             double sinyaw = Math.Sin(yaw);
             double cosyaw = Math.Cos(yaw);
 
-
+            //none of this shit is working yet. big issues when one of the holdvals is 0
             double holdval1 = (input.X * sinyaw) + (input.X * sinyaw * cosyaw) + input.Y;
             double holdval2 = sinyaw * ((cosyaw * cosyaw) + 2 + (2 * cosyaw));
 
@@ -75,10 +85,8 @@ namespace LungeWarpVisualiser
             double outputx = holdval1 / holdval2;
 
 
-            double outputy = input.Y - (output)
+            double outputy = (input.Y - (outputx * sinyaw)) / (1 + cosyaw);
             //y = (b  - X * sin(d)) / (1 + cos(d))
-
-            double outputx = (input.X + outputy * sinyaw) / (1 + cosyaw);
 
             double outputz = (input.Z - outputx) / 2;
 
