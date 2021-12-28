@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.Numerics;
 using System.Diagnostics;
 
+
 namespace LungeWarpVisualiser
 {
     /// <summary>
@@ -38,12 +39,65 @@ namespace LungeWarpVisualiser
             Console.WriteLine("Input rotation" + inputrot);
             Console.WriteLine("Output position: "+ firstoutput);
             Console.WriteLine("Reversing output position to get input position " + Calc_out_reverse(firstoutput, inputrot.Z));
+
+
+
+
+
+
+            //bunch of code for drag and dropping origin image stolen from https://stackoverflow.com/questions/17035225/c-sharp-wpf-drag-an-image
+            var uriSource = new Uri(@"dragme.png", UriKind.Relative);
+            var bitmap = new BitmapImage(uriSource);
+            var image = new Image { Source = bitmap };
+            Canvas.SetLeft(image, 0);
+            Canvas.SetTop(image, 0);
+            Origin.Children.Add(image);
+        }
+
+
+        private Image draggedImage;
+        private Point mousePosition;
+
+        private void OriginMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var image = e.Source as Image;
+
+            if (image != null && Origin.CaptureMouse())
+            {
+                mousePosition = e.GetPosition(Origin);
+                draggedImage = image;
+                Panel.SetZIndex(draggedImage, 1); // in case of multiple images
+            }
+        }
+
+        private void OriginMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (draggedImage != null)
+            {
+                Origin.ReleaseMouseCapture();
+                Panel.SetZIndex(draggedImage, 0);
+                draggedImage = null;
+            }
+        }
+
+        private void OriginMouseMove(object sender, MouseEventArgs e)
+        {
+            if (draggedImage != null)
+            {
+                var position = e.GetPosition(Origin);
+                var offset = position - mousePosition;
+                mousePosition = position;
+                Canvas.SetLeft(draggedImage, Canvas.GetLeft(draggedImage) + offset.X);
+                Canvas.SetTop(draggedImage, Canvas.GetTop(draggedImage) + offset.Y);
+            }
         }
 
         public double Radians(double degrees)
         {
             return degrees * Math.PI / 180;
         }
+
+
 
         //take in input position and input rotation (in degrees) (where you're lunge warping from, and return output position (where you will get lunge warped to)
         public Vector3 Calc_out(Vector3 inputpos, Vector3 inputrot)
@@ -52,7 +106,7 @@ namespace LungeWarpVisualiser
             inputrot.Y = (float)Radians(inputrot.Y);
             inputrot.Z = (float)Radians(inputrot.Z);
 
-            //math straight up copy pasted from phobics calculator  https://docs.google.com/spreadsheets/d/1EcPsPU6DdgsKG--NVndPSWeZWwM04pCjSro9t0RxF3U/edit#gid=1184370500
+            //math straight up copy pasted from phobics calculator  https://docs.google.com/spreadsheets/d/1Tb4HeOHJxyXm04Chrqn9oYAtX2-jjoTvPJFPiaIhALM/edit#gid=1184370500
             double outputx = inputpos.X + inputpos.X * Math.Cos(inputrot.Z) * Math.Cos(inputrot.Y) - inputpos.Y * (Math.Cos(inputrot.Z) * Math.Sin(inputrot.Y) * Math.Sin(inputrot.X) + Math.Sin(inputrot.Z) * Math.Cos(inputrot.X)) + inputpos.Z * (Math.Sin(inputrot.Z) * Math.Sin(inputrot.X) - Math.Cos(inputrot.Z) * Math.Sin(inputrot.Y) * Math.Cos(inputrot.X));
 
             double outputy = inputpos.Y + inputpos.X * (Math.Sin(inputrot.Z) * Math.Cos(inputrot.Y)) + inputpos.Y * (Math.Cos(inputrot.Z) * Math.Cos(inputrot.X) - Math.Sin(inputrot.Z) * Math.Sin(inputrot.Y) * Math.Sin(inputrot.X)) - inputpos.Z * (Math.Sin(inputrot.Z) * Math.Sin(inputrot.Y) * Math.Cos(inputrot.X) + Math.Cos(inputrot.Z) * Math.Sin(inputrot.X));
@@ -90,7 +144,7 @@ namespace LungeWarpVisualiser
 
             double outputz = (input.Z - outputx) / 2;
 
-    
+            //GOD WHY IS MATH HARD
 
 
             Vector3 Killme = new Vector3((float)outputx, (float)outputy, (float)outputz);
