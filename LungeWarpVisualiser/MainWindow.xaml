@@ -23,6 +23,10 @@
 
     <Grid>
 
+
+
+
+
         <!--background-->
         <Image HorizontalAlignment="Left" Height="500" VerticalAlignment="Top"  Width="500" Margin="0,0,0,0" Source="C:\Users\mauri\source\repos\LungeWarpVisualiser\LungeWarpVisualiser\hnayl1.png"/>
 
@@ -39,7 +43,24 @@
             
         </Grid>
 
-       
+        <!--output icon-->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Canvas x:Name="Output" IsHitTestVisible="false"
+  >
+               
+            </Canvas>
+
+        </Grid>
+
+        <Slider x:Name="Roll" Width="120" Maximum="360" Margin="551,10,129,-10" Thumb.DragDelta="slider1_DragDelta" />
+
+        <Slider x:Name="Pitch" Width="120" Maximum="360" Margin="551,110,129,-10" Thumb.DragDelta="slider2_DragDelta" />
+
+        <Slider x:Name="Yaw" Width="120" Maximum="360" Margin="551,210,129,-10" Thumb.DragDelta="slider3_DragDelta" />
 
     </Grid>
 </Window>

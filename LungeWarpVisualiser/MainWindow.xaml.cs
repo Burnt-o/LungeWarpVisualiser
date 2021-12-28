@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Numerics;
 using System.Diagnostics;
+using System.Windows.Controls.Primitives;
 
 
 namespace LungeWarpVisualiser
@@ -49,18 +50,26 @@ namespace LungeWarpVisualiser
             var uriSource = new Uri(@"dragme.png", UriKind.Relative);
             var bitmap = new BitmapImage(uriSource);
             var image = new Image { Source = bitmap };
+            var image2 = new Image { Source = bitmap };
             Canvas.SetLeft(image, 0);
             Canvas.SetTop(image, 0);
             Origin.Children.Add(image);
+            Output.Children.Add(image2);
         }
 
 
         private Image draggedImage;
+        private Image storeddraggedImage;
+        private Image outputImage;
+    
         private Point mousePosition;
 
         private void OriginMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var image = e.Source as Image;
+            var output = Output.Children[0] as Image;
+            outputImage = output;
+            storeddraggedImage = image;
 
             if (image != null && Origin.CaptureMouse())
             {
@@ -80,16 +89,84 @@ namespace LungeWarpVisualiser
             }
         }
 
+        private void RecalculateOutput()
+        {
+            //this shuold get called on: dragging origin, adjusting sliders
+            //calculate phobic stuff
+            //need to figure out how to align map with actual coords but that comes later
+            Vector2 position = new Vector2((float)Canvas.GetLeft(storeddraggedImage), (float)Canvas.GetTop(storeddraggedImage)) ;
+
+        
+ 
+
+            Vector2 transformedoffset = ConvertCoords((float)position.X, (float)position.Y);
+            Vector3 inputpos = new Vector3(transformedoffset.X, transformedoffset.Y, (float)0);
+            Vector3 inputrot = new Vector3((float)Roll.Value, (float)Pitch.Value, (float)Yaw.Value);
+
+            //Console.WriteLine("rol: " + inputrot.X);
+           // Console.WriteLine("pit: " + inputrot.Y);
+            //Console.WriteLine("yaw: " + inputrot.Z);
+
+            Console.WriteLine("ix: " + inputpos.X);
+            Console.WriteLine("iy: " + inputpos.Y);
+
+            Vector3 outputpos = Calc_out(inputpos, inputrot);
+            Console.WriteLine("ox: " + outputpos.X);
+            Console.WriteLine("oy: " + outputpos.Y);
+
+            Canvas.SetLeft(outputImage, outputpos.X + 250);
+            Canvas.SetTop(outputImage, outputpos.Y + 250);
+        }
+
+
         private void OriginMouseMove(object sender, MouseEventArgs e)
         {
             if (draggedImage != null)
             {
                 var position = e.GetPosition(Origin);
                 var offset = position - mousePosition;
+
                 mousePosition = position;
                 Canvas.SetLeft(draggedImage, Canvas.GetLeft(draggedImage) + offset.X);
                 Canvas.SetTop(draggedImage, Canvas.GetTop(draggedImage) + offset.Y);
+
+
+
+                RecalculateOutput();
+               
+
+                //test
+                //Canvas.SetLeft(outputImage, 100);
+               // Canvas.SetTop(outputImage, 100);
+
             }
+        }
+
+
+        private void slider1_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+
+            RecalculateOutput();
+        }
+
+        private void slider2_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+            RecalculateOutput();
+        }
+
+        private void slider3_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+            RecalculateOutput();
+        }
+
+
+        public Vector2 ConvertCoords(float x, float y)
+        { 
+        
+        //grid is 500x500. we want 250,250 to be 0,0
+        Vector2 output = new Vector2(x - 250, y - 250);
+            return output;
+        
         }
 
         public double Radians(double degrees)
