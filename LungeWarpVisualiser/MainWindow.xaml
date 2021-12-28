@@ -28,9 +28,9 @@
 
 
         <!--background-->
-        <Image HorizontalAlignment="Left" Height="500" VerticalAlignment="Top"  Width="500" Margin="0,0,0,0" Source="C:\Users\mauri\source\repos\LungeWarpVisualiser\LungeWarpVisualiser\hnayl1.png"/>
+        <Image HorizontalAlignment="Left" Height="500" VerticalAlignment="Top"  Width="500" Margin="0,0,0,0" Source="C:\Users\mauri\source\repos\LungeWarpVisualiser\LungeWarpVisualiser\aaaaaaaaa.png"/>
 
- <!--draggable icon-->
+        <!--draggable icon-->
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition/>
@@ -40,7 +40,7 @@
                                   MouseLeftButtonDown="OriginMouseLeftButtonDown"
             MouseLeftButtonUp="OriginMouseLeftButtonUp"
             MouseMove="OriginMouseMove"  />
-            
+
         </Grid>
 
         <!--output icon-->
@@ -51,16 +51,21 @@
             </Grid.RowDefinitions>
             <Canvas x:Name="Output" IsHitTestVisible="false"
   >
-               
+
+
             </Canvas>
 
         </Grid>
 
-        <Slider x:Name="Roll" Width="120" Maximum="360" Margin="551,10,129,-10" Thumb.DragDelta="slider1_DragDelta" />
+        <Slider x:Name="Roll" Width="120" Maximum="360" Value="180" Margin="551,10,129,-10" Thumb.DragDelta="slider1_DragDelta" />
+        <Label x:Name="RollLabel" Content="Rol: 0" Height="30"  Width="68" Margin="691,0,41,623" VerticalAlignment="Bottom" />
+        <Slider x:Name="Pitch" Width="120" Maximum="360" Value="180" Margin="551,110,129,-10" Thumb.DragDelta="slider2_DragDelta" />
+        <Label x:Name="PitchLabel" Content="Pit: 0" Height="30"  Width="68" Margin="691,0,41,523" VerticalAlignment="Bottom" />
+        <Slider x:Name="Yaw" Width="120" Maximum="360" Value="180" Margin="551,210,129,-10" Thumb.DragDelta="slider3_DragDelta" />
+        <Label x:Name="YawLabel" Content="Yaw: 0" Height="30"  Width="68" Margin="691,0,41,423" VerticalAlignment="Bottom" />
+        <Slider x:Name="Height" Width="120" Maximum="360" Value="180" Margin="551,310,129,-10" Thumb.DragDelta="slider4_DragDelta" />
+        <Label x:Name="HeightLabel" Content="Hei: 0" Height="30"  Width="68" Margin="691,0,41,323" VerticalAlignment="Bottom" />
 
-        <Slider x:Name="Pitch" Width="120" Maximum="360" Margin="551,110,129,-10" Thumb.DragDelta="slider2_DragDelta" />
-
-        <Slider x:Name="Yaw" Width="120" Maximum="360" Margin="551,210,129,-10" Thumb.DragDelta="slider3_DragDelta" />
-
+        <Label x:Name="OutputHeightLabel" Content="OpH: 0" Height="30"  Width="68" Margin="691,0,41,223" VerticalAlignment="Bottom" />
     </Grid>
 </Window>

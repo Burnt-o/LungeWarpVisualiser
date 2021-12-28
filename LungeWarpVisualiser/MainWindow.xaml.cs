@@ -30,8 +30,8 @@ namespace LungeWarpVisualiser
             InitializeComponent();
 
 
-            Vector3 inputpos = new Vector3(0, 800, 200);
-            Vector3 inputrot = new Vector3(0, 0, 0);
+            Vector3 inputpos = new Vector3(25, 25, 1000);
+            Vector3 inputrot = new Vector3(0, 30, 90);
 
 
             Vector3 firstoutput = Calc_out(inputpos, inputrot);
@@ -100,8 +100,8 @@ namespace LungeWarpVisualiser
  
 
             Vector2 transformedoffset = ConvertCoords((float)position.X, (float)position.Y);
-            Vector3 inputpos = new Vector3(transformedoffset.X, transformedoffset.Y, (float)0);
-            Vector3 inputrot = new Vector3((float)Roll.Value, (float)Pitch.Value, (float)Yaw.Value);
+            Vector3 inputpos = new Vector3(transformedoffset.X, transformedoffset.Y, (float)Height.Value - 180);
+            Vector3 inputrot = new Vector3((float)Roll.Value - 180, (float)Pitch.Value - 180, (float)Yaw.Value - 180);
 
             //Console.WriteLine("rol: " + inputrot.X);
            // Console.WriteLine("pit: " + inputrot.Y);
@@ -116,7 +116,9 @@ namespace LungeWarpVisualiser
 
             Canvas.SetLeft(outputImage, outputpos.X + 250);
             Canvas.SetTop(outputImage, outputpos.Y + 250);
+            OutputHeightLabel.Content = "OpH: " + outputpos.Z.ToString();
         }
+
 
 
         private void OriginMouseMove(object sender, MouseEventArgs e)
@@ -145,17 +147,25 @@ namespace LungeWarpVisualiser
 
         private void slider1_DragDelta(object sender, DragDeltaEventArgs e)
         {
-
+            RollLabel.Content = "Rol: " + (Roll.Value - 180).ToString();
             RecalculateOutput();
         }
 
         private void slider2_DragDelta(object sender, DragDeltaEventArgs e)
         {
+            PitchLabel.Content = "Pit: " + (Pitch.Value - 180).ToString();
             RecalculateOutput();
         }
 
         private void slider3_DragDelta(object sender, DragDeltaEventArgs e)
         {
+            YawLabel.Content = "Yaw: " + (Yaw.Value - 180).ToString();
+            RecalculateOutput();
+        }
+
+        private void slider4_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+            HeightLabel.Content = "Hei: " + (Height.Value - 180).ToString();
             RecalculateOutput();
         }
 
@@ -183,6 +193,8 @@ namespace LungeWarpVisualiser
             inputrot.Y = (float)Radians(inputrot.Y);
             inputrot.Z = (float)Radians(inputrot.Z);
 
+            inputpos.Y = -inputpos.Y;
+
             //math straight up copy pasted from phobics calculator  https://docs.google.com/spreadsheets/d/1Tb4HeOHJxyXm04Chrqn9oYAtX2-jjoTvPJFPiaIhALM/edit#gid=1184370500
             double outputx = inputpos.X + inputpos.X * Math.Cos(inputrot.Z) * Math.Cos(inputrot.Y) - inputpos.Y * (Math.Cos(inputrot.Z) * Math.Sin(inputrot.Y) * Math.Sin(inputrot.X) + Math.Sin(inputrot.Z) * Math.Cos(inputrot.X)) + inputpos.Z * (Math.Sin(inputrot.Z) * Math.Sin(inputrot.X) - Math.Cos(inputrot.Z) * Math.Sin(inputrot.Y) * Math.Cos(inputrot.X));
 
@@ -190,6 +202,7 @@ namespace LungeWarpVisualiser
 
             double outputz = inputpos.Z + inputpos.X * (Math.Sin(inputrot.Y)) + inputpos.Y * (Math.Cos(inputrot.Y) * Math.Sin(inputrot.X)) + inputpos.Z * (Math.Cos(inputrot.Y) * Math.Cos(inputrot.X));
 
+            outputy = -outputy;
             Vector3 Killme = new Vector3((float)outputx, (float)outputy, (float)outputz);
             return Killme;
         }
