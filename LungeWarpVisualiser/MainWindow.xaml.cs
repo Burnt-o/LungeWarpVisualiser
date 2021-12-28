@@ -30,6 +30,9 @@ namespace LungeWarpVisualiser
             InitializeComponent();
 
 
+            
+           
+
             Vector3 inputpos = new Vector3(25, 25, 1000);
             Vector3 inputrot = new Vector3(0, 30, 90);
 
@@ -50,11 +53,23 @@ namespace LungeWarpVisualiser
             var uriSource = new Uri(@"dragme.png", UriKind.Relative);
             var bitmap = new BitmapImage(uriSource);
             var image = new Image { Source = bitmap };
-            var image2 = new Image { Source = bitmap };
+
+
+            var uriSource3 = new Uri(@"dragme2.png", UriKind.Relative);
+            var bitmap3 = new BitmapImage(uriSource3);
+            var image2 = new Image { Source = bitmap3 };
+
+            var uriSource2 = new Uri(@"aaaaaaaaa.png", UriKind.Relative);
+              var bitmap2 = new BitmapImage(uriSource2);
+            mapbackground.Source = bitmap2;
+
+
             Canvas.SetLeft(image, 0);
             Canvas.SetTop(image, 0);
             Origin.Children.Add(image);
             Output.Children.Add(image2);
+
+            RecalculateOutput();
         }
 
 
@@ -89,11 +104,40 @@ namespace LungeWarpVisualiser
             }
         }
 
+
+        GeometryGroup _samplepoints = new GeometryGroup();
+
+        private void Samplechanged(object sender, EventArgs e)
+        {
+            RecalculateOutput();
+        }
+
+        private void Samplecheckboxchanged(object sender, EventArgs e)
+        {
+            if ((bool)samplePitch.IsChecked || (bool)sampleRoll.IsChecked || (bool)sampleYaw.IsChecked)
+            {
+                //any of them are checked
+                RecalculateOutput();
+            }
+            else
+            {
+                //clear drawing thingy
+                _samplepoints.Children.Clear();
+                pointimage.Geometry = _samplepoints;
+            }
+
+        }
+
         private void RecalculateOutput()
         {
             //this shuold get called on: dragging origin, adjusting sliders
             //calculate phobic stuff
             //need to figure out how to align map with actual coords but that comes later
+            if (storeddraggedImage == null)
+            {
+                return;
+            }
+
             Vector2 position = new Vector2((float)Canvas.GetLeft(storeddraggedImage), (float)Canvas.GetTop(storeddraggedImage)) ;
 
         
@@ -107,16 +151,108 @@ namespace LungeWarpVisualiser
            // Console.WriteLine("pit: " + inputrot.Y);
             //Console.WriteLine("yaw: " + inputrot.Z);
 
-            Console.WriteLine("ix: " + inputpos.X);
-            Console.WriteLine("iy: " + inputpos.Y);
+            //Console.WriteLine("ix: " + inputpos.X);
+            //Console.WriteLine("iy: " + inputpos.Y);
 
             Vector3 outputpos = Calc_out(inputpos, inputrot);
-            Console.WriteLine("ox: " + outputpos.X);
-            Console.WriteLine("oy: " + outputpos.Y);
+            //Console.WriteLine("ox: " + outputpos.X);
+            //Console.WriteLine("oy: " + outputpos.Y);
 
             Canvas.SetLeft(outputImage, outputpos.X + 250);
             Canvas.SetTop(outputImage, outputpos.Y + 250);
             OutputHeightLabel.Content = "OpH: " + outputpos.Z.ToString();
+
+
+
+            inputdisplay.Text = "Input: \n" + inputpos.X.ToString() + "\n" + inputpos.Y.ToString() + "\n" + inputpos.Z.ToString();
+            outputdisplay.Text = "Output: \n" + outputpos.X.ToString() + "\n" + outputpos.Y.ToString() + "\n" + outputpos.Z.ToString();
+
+            _samplepoints.FillRule = (FillRule.Nonzero);
+            if ((bool)samplePitch.IsChecked || (bool)sampleRoll.IsChecked || (bool)sampleYaw.IsChecked)
+            {
+                int samplenum;
+                try
+                {
+                    samplenum = Int32.Parse(samplecount.Text);
+                }
+                catch (Exception ex)
+                {
+                    samplenum = 100;
+                }
+
+
+
+
+                Random rand = new Random();
+                
+                _samplepoints.Children.Clear();
+                for (int i = 1; i <= samplenum; i++)
+                {
+
+                    float samplelimitfloat;
+                    try
+                    {
+                        samplelimitfloat = float.Parse(samplelimit.Text, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                    }
+                    catch (Exception ex)
+                    {
+                        samplelimitfloat = 45;
+                    }
+
+
+
+
+                    if ((bool) sampleRoll.IsChecked)
+                    inputrot.X = (float)rand.NextDouble() * (samplelimitfloat * 2) - samplelimitfloat;
+
+                    //Console.WriteLine("E " + inputrot.X);
+
+                    if ((bool)samplePitch.IsChecked)
+                        inputrot.Y = (float)rand.NextDouble() * (samplelimitfloat * 2) - samplelimitfloat;
+
+                    if ((bool)sampleYaw.IsChecked)
+                        inputrot.Z = (float)rand.NextDouble() * 360 - 180;
+
+                    //Console.WriteLine("AAAA" + inputrot.Z);
+                    outputpos = Calc_out(inputpos, inputrot);
+
+                    // Console.WriteLine("aaaa: " + outputpos);
+                    if (!(outputpos.X * 2 > 500 || outputpos.X * 2 < -500 || outputpos.Y * 2 > 500 || outputpos.Y * 2 < -500))
+                    {
+
+                        _samplepoints.Children.Add(
+        new EllipseGeometry
+        {
+            Center = new Point(outputpos.X * 2, outputpos.Y * 2),
+            RadiusX = 3,
+            RadiusY = 3
+        }); 
+
+                    }
+          
+                    
+                }
+
+                //draw the points
+                _samplepoints.Children.Add(
+new EllipseGeometry
+{
+Center = new Point(-500, -500),
+RadiusX = 0.1,
+RadiusY = 0.1
+});
+                _samplepoints.Children.Add(
+new EllipseGeometry
+{
+Center = new Point(500, 500),
+RadiusX = 0.1,
+RadiusY = 0.1
+}); ;
+                pointimage.Geometry = _samplepoints;
+
+
+            }
+
         }
 
 

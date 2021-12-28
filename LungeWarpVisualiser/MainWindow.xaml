@@ -21,14 +21,42 @@
     </Window.Resources>
 
 
-    <Grid>
+    <Grid Background="Sienna">
+
+
+
 
 
 
 
 
         <!--background-->
-        <Image HorizontalAlignment="Left" Height="500" VerticalAlignment="Top"  Width="500" Margin="0,0,0,0" Source="C:\Users\mauri\source\repos\LungeWarpVisualiser\LungeWarpVisualiser\aaaaaaaaa.png"/>
+        <Image x:Name="mapbackground" HorizontalAlignment="Left" Height="500" VerticalAlignment="Top"  Width="500" Margin="0,0,0,0" />
+        <Viewbox Width="500" Height="500" HorizontalAlignment="Left" VerticalAlignment="Top" >
+            <Rectangle Width="500" Height="500" Stroke="Black" StrokeThickness="0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Rectangle.Fill>
+                    <DrawingBrush>
+                        <DrawingBrush.Drawing>
+                            <GeometryDrawing Brush="Yellow" x:Name="pointimage" >
+                                <GeometryDrawing.Pen>
+                                    <Pen Thickness="0.01">
+                                        <Pen.Brush>
+                                            <LinearGradientBrush>
+                                                <GradientStop Offset="0.0" Color="Blue" />
+                                                <GradientStop Offset="1.0" Color="Black" />
+                                            </LinearGradientBrush>
+                                        </Pen.Brush>
+                                    </Pen>
+                                </GeometryDrawing.Pen>
+
+
+                            </GeometryDrawing>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Viewbox>
+
 
         <!--draggable icon-->
         <Grid>
@@ -57,15 +85,26 @@
 
         </Grid>
 
-        <Slider x:Name="Roll" Width="120" Maximum="360" Value="180" Margin="551,10,129,-10" Thumb.DragDelta="slider1_DragDelta" />
-        <Label x:Name="RollLabel" Content="Rol: 0" Height="30"  Width="68" Margin="691,0,41,623" VerticalAlignment="Bottom" />
-        <Slider x:Name="Pitch" Width="120" Maximum="360" Value="180" Margin="551,110,129,-10" Thumb.DragDelta="slider2_DragDelta" />
-        <Label x:Name="PitchLabel" Content="Pit: 0" Height="30"  Width="68" Margin="691,0,41,523" VerticalAlignment="Bottom" />
-        <Slider x:Name="Yaw" Width="120" Maximum="360" Value="180" Margin="551,210,129,-10" Thumb.DragDelta="slider3_DragDelta" />
-        <Label x:Name="YawLabel" Content="Yaw: 0" Height="30"  Width="68" Margin="691,0,41,423" VerticalAlignment="Bottom" />
-        <Slider x:Name="Height" Width="120" Maximum="360" Value="180" Margin="551,310,129,-10" Thumb.DragDelta="slider4_DragDelta" />
-        <Label x:Name="HeightLabel" Content="Hei: 0" Height="30"  Width="68" Margin="691,0,41,323" VerticalAlignment="Bottom" />
+        <Slider x:Name="Roll" Width="120" Maximum="360" Value="180" Margin="500,10,129,-10" Thumb.DragDelta="slider1_DragDelta" />
+        <Label x:Name="RollLabel" Content="Rol: 0" Height="30"  Width="68" Margin="600,0,41,623" VerticalAlignment="Bottom" />
+        <Slider x:Name="Pitch" Width="120" Maximum="360" Value="180" Margin="500,110,129,-10" Thumb.DragDelta="slider2_DragDelta"  />
+        <Label x:Name="PitchLabel" Content="Pit: 0" Height="30"  Width="68" Margin="600,0,41,523" VerticalAlignment="Bottom" />
+        <Slider x:Name="Yaw" Width="120" Maximum="360" Value="180" Margin="500,210,129,-10" Thumb.DragDelta="slider3_DragDelta" />
+        <Label x:Name="YawLabel" Content="Yaw: 0" Height="30"  Width="68" Margin="600,0,41,423" VerticalAlignment="Bottom" />
+        <Slider x:Name="Height" Width="120" Maximum="360" Value="180" Margin="500,310,129,-10" Thumb.DragDelta="slider4_DragDelta" />
+        <Label x:Name="HeightLabel" Content="Input Height: 0" Height="30"  Width="120" Margin="600,0,41,323" VerticalAlignment="Bottom" />
 
-        <Label x:Name="OutputHeightLabel" Content="OpH: 0" Height="30"  Width="68" Margin="691,0,41,223" VerticalAlignment="Bottom" />
+        <Label x:Name="OutputHeightLabel" Content="Output Height: 0" Height="30"  Width="120" Margin="646,0,34,304" VerticalAlignment="Bottom" />
+        <CheckBox x:Name="sampleRoll" Content="Sample Roll" HorizontalAlignment="Left" Margin="573,385,0,0" VerticalAlignment="Top" Checked="Samplecheckboxchanged" Unchecked="Samplecheckboxchanged"/>
+        <CheckBox x:Name="samplePitch" Content="Sample Pitch" HorizontalAlignment="Left" Margin="573,405,0,0" VerticalAlignment="Top" Checked="Samplecheckboxchanged" Unchecked="Samplecheckboxchanged"/>
+        <CheckBox x:Name="sampleYaw" Content="Sample Yaw" HorizontalAlignment="Left" Margin="573,425,0,0" VerticalAlignment="Top" Checked="Samplecheckboxchanged" Unchecked="Samplecheckboxchanged"/>
+
+        <TextBox x:Name="samplecount" HorizontalAlignment="Left" Margin="573,482,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="120" TextChanged="Samplechanged"/>
+        <Label Content="Sample count (more = lag but pretty)" HorizontalAlignment="Left" Margin="573,462,0,0" VerticalAlignment="Top"/>
+
+        <TextBox x:Name="samplelimit" HorizontalAlignment="Left" Margin="573,512,0,0" TextWrapping="Wrap" Text="45" VerticalAlignment="Top" Width="120" TextChanged="Samplechanged"/>
+        <Label Content="+/- limit for pitch and roll sampling" HorizontalAlignment="Left" Margin="573,492,0,0" VerticalAlignment="Top"/>
+        <TextBlock x:Name="inputdisplay" HorizontalAlignment="Left" Height="74" Margin="51,502,0,0" TextWrapping="Wrap" Text="Input: " VerticalAlignment="Top" Width="94"/>
+        <TextBlock x:Name="outputdisplay" HorizontalAlignment="Left" Height="74" Margin="156,502,0,0" TextWrapping="Wrap" Text="Output: " VerticalAlignment="Top" Width="94"/>
     </Grid>
 </Window>
